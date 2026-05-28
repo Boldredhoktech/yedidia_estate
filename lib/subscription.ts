@@ -67,7 +67,7 @@ export async function getActiveSubscription(
         .maybeSingle()
 
     if (error || !data) return null
-    return data as ActiveSubscription
+    return data as unknown as ActiveSubscription
 }
 
 // ─────────────────────────────────────────────

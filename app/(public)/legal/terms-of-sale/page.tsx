@@ -2,7 +2,7 @@
 
 import type { Metadata }              from 'next'
 import LegalPageWrapper               from '@/components/public/LegalPageWrapper'
-import { Section, ContactBlock }      from '@/app/(public)/legal/privacy-policy/page'
+import { Section, ContactBlock }      from '@/components/public/LegalSection'
 import { siteConfig }                 from '@/config/siteconfig'
 
 export const metadata: Metadata = {

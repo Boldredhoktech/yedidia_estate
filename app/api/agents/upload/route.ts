@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
             ? siteConfig.media.video.acceptedFormats
             : siteConfig.media.photo.acceptedFormats
 
-        if (!allowed.includes(file.type)) {
+        if (!(allowed as readonly string[]).includes(file.type)) {
             return NextResponse.json(
                 { error: `Unsupported file type: ${file.type}` },
                 { status: 400 }

@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
         const parsed = listingSchema.safeParse(body)
 
         if (!parsed.success) {
-            const msg = parsed.error.errors[0]?.message ?? 'Invalid data.'
+            const msg = parsed.error.issues[0]?.message ?? 'Invalid data.'
             return NextResponse.json({ error: msg }, { status: 400 })
         }
 

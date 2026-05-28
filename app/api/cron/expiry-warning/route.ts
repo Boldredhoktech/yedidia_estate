@@ -80,7 +80,7 @@ export async function GET(req: NextRequest) {
         }
 
         for (const listing of (expiringListings ?? [])) {
-            const agent = listing.agent as {
+            const agent = listing.agent as unknown as {
                 id:        string
                 email:     string
                 full_name: string

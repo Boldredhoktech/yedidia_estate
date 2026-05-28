@@ -100,7 +100,9 @@ async function getListing(id: string): Promise<ListingDetail | null> {
 
 // Increment view count (fire and forget)
 async function incrementViews(id: string) {
-    await supabaseAdmin.rpc('increment_view_count', { listing_id: id }).catch(() => {})
+    try {
+        await supabaseAdmin.rpc('increment_view_count', { listing_id: id })
+    } catch { /* silent */ }
 }
 
 // ─────────────────────────────────────────────

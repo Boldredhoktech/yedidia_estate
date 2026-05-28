@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
         const parsed = loginSchema.safeParse(body)
 
         if (!parsed.success) {
-            const msg = parsed.error.errors[0]?.message ?? 'Invalid request.'
+            const msg = parsed.error.issues[0]?.message ?? 'Invalid request.'
             return NextResponse.json({ error: msg }, { status: 400 })
         }
 

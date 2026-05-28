@@ -55,7 +55,8 @@ async function getAgentData(agentId: string) {
 
     return {
         stats,
-        subscription: subRes.data ?? null,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        subscription: (subRes.data as unknown as any) ?? null,
         recentListings: listingsRes.data ?? [],
     }
 }

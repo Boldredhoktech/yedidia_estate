@@ -71,8 +71,8 @@ async function getBillingData(agentId: string) {
     ])
 
     return {
-        formulas:      (formulasRes.data   ?? []) as Formula[],
-        payments:      (paymentsRes.data   ?? []) as PaymentRecord[],
+        formulas:      (formulasRes.data   ?? []) as unknown as Formula[],
+        payments:      (paymentsRes.data   ?? []) as unknown as PaymentRecord[],
         activeSubscription: activeSubRes.data ?? null,
     }
 }
