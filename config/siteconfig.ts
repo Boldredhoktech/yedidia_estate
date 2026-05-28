@@ -8,7 +8,7 @@ export const siteConfig = {
     name:        'Yedidia Estate',
     tagline:     'Your Trusted Real Estate Partner in Ghana',
     description: 'Yedidia Estate connects property buyers, renters, and sellers across Ghana. Browse parcels, furnished apartments, and houses for sale or rent.',
-    url:         process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000',
+    url:         process.env.NEXT_PUBLIC_APP_URL ?? 'https://www.yedidia-estate.com',
     locale:      'en-GH',
     currency:    'GHS',
     country:     'Ghana',
@@ -18,10 +18,10 @@ export const siteConfig = {
     // CONTACT
     // ─────────────────────────────────────────────
     contact: {
-        phoneMain:      '+233 XX XXX XXXX',
-        phoneSupport:   '+233 XX XXX XXXX',
-        whatsapp:       '+233XXXXXXXXX',       // format international sans espaces
-        whatsappLink:   'https://wa.me/233XXXXXXXXX',
+        phoneMain:      '+233 50 484 3682',
+        phoneSupport:   '+233 59 588 5449',
+        whatsapp:       '+2330504843682',
+        whatsappLink:   'https://wa.me/2330504843682',
         telegram:       'https://t.me/yedidia_estate',
         emailContact:   'contact@yedidia-estate.com',
         emailComplaints:'complaints@yedidia-estate.com',

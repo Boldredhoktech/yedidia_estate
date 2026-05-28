@@ -55,8 +55,9 @@ export const metadata: Metadata = {
         creator: siteConfig.seo.twitterHandle,
     },
     icons: {
-        icon:    agencyConfig.logo.favicon,
-        apple:   '/apple-touch-icon.png',
+        icon:             [{ url: '/logo.png', type: 'image/png' }],
+        apple:            '/apple-touch-icon.png',
+        shortcut:         '/logo.png',
     },
     robots: {
         index:  true,

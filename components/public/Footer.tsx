@@ -171,11 +171,6 @@ export default function Footer() {
                         : `${agencyConfig.foundedYear}–${year}`
                     } {siteConfig.legal.companyName}. All rights reserved.
                     </p>
-                    <p className="text-xs text-gray-600">
-                        Made with{' '}
-                        <span className="text-brand-500">♥</span>
-                        {' '}in {agencyConfig.ghana.flagEmoji} Ghana
-                    </p>
                 </div>
             </div>
         </footer>

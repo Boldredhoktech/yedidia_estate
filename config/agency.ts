@@ -10,12 +10,12 @@ export const agencyConfig = {
     name:       'Yedidia Estate',
     shortName:  'YE',
 
-    // Logo paths (place files in /public/images/)
+    // Logo paths
     logo: {
-        light:    '/images/logo-light.png',   // logo on dark background
-        dark:     '/images/logo-dark.png',    // logo on light background
-        favicon:  '/favicon.ico',
-        ogImage:  '/images/og-default.jpg',
+        light:    '/logo.png',
+        dark:     '/logo.png',
+        favicon:  '/logo.png',
+        ogImage:  '/logo.png',
     },
 
     // Brand colours (mirrored from tailwind config for use in inline styles if needed)
