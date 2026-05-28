@@ -16,24 +16,18 @@ export default function Header() {
 
                     {/* ── Logo ── */}
                     <Link href="/" className="flex items-center gap-3 group flex-shrink-0">
-                        {/* Logo image — falls back to text if not yet added */}
+                        {/* Logo */}
                         <div className="relative w-9 h-9 md:w-11 md:h-11 rounded-xl overflow-hidden
                             bg-brand-500 flex items-center justify-center flex-shrink-0
                             shadow-md group-hover:shadow-brand-300 transition-shadow duration-300">
                             <Image
-                                src={agencyConfig.logo.dark}
+                                src="/logo.png"
                                 alt={agencyConfig.name}
                                 fill
-                                className="object-contain p-1"
-                                onError={undefined}
+                                className="object-contain p-0.5 z-10"
                                 unoptimized
+                                priority
                             />
-                            {/* Fallback initials shown via CSS if image fails */}
-                            <span className="absolute inset-0 flex items-center justify-center
-                               text-white font-bold text-sm pointer-events-none select-none"
-                                  aria-hidden="true">
-                {agencyConfig.shortName}
-              </span>
                         </div>
 
                         {/* Brand name */}

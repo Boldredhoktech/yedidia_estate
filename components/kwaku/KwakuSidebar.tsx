@@ -3,6 +3,7 @@
 'use client'
 
 import Link             from 'next/link'
+import Image            from 'next/image'
 import { usePathname }  from 'next/navigation'
 import { agencyConfig } from '@/config/agency'
 import { siteConfig }   from '@/config/siteconfig'
@@ -135,11 +136,10 @@ export default function KwakuSidebar({ session }: KwakuSidebarProps) {
             {/* Brand */}
             <div className="px-5 py-5 border-b border-gray-800">
                 <Link href="/" className="flex items-center gap-2.5 group">
-                    <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center
-                          justify-center flex-shrink-0">
-            <span className="text-white font-extrabold text-sm">
-              {agencyConfig.shortName}
-            </span>
+                    <div className="relative w-9 h-9 rounded-xl overflow-hidden
+                          bg-indigo-600 flex-shrink-0">
+                        <Image src="/logo.png" alt="Yedidia Estate" fill
+                               className="object-contain p-0.5" unoptimized />
                     </div>
                     <div>
                         <p className="font-bold text-white text-sm leading-none
