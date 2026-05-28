@@ -4,12 +4,13 @@ import { Resend } from 'resend'
 import { siteConfig } from '@/config/siteconfig'
 
 // ─────────────────────────────────────────────
-// RESEND CLIENT
+// RESEND CLIENT — lazy initialization
+// Do NOT instantiate at module load time: the build imports this file
+// even when RESEND_API_KEY is not yet set, which would throw.
+// The client is created only when sendMail() is actually called.
 // ─────────────────────────────────────────────
 
-const resend = new Resend(process.env.RESEND_API_KEY!)
-
-const FROM    = process.env.RESEND_FROM    ?? `Yedidia Estate <noreply@yedidia-estate.com>`
+const FROM          = process.env.RESEND_FROM ?? `Yedidia Estate <noreply@yedidia-estate.com>`
 const COMPLAINTS_TO = siteConfig.contact.emailComplaints
 const SUPPORT_TO    = siteConfig.contact.emailSupport
 
@@ -32,7 +33,14 @@ async function sendMail(opts: {
     subject: string
     html:    string
 }): Promise<MailResult> {
+    const apiKey = process.env.RESEND_API_KEY
+    if (!apiKey) {
+        console.warn('[mailer] RESEND_API_KEY not configured — email skipped')
+        return { success: false, error: 'Email service not configured.' }
+    }
+
     try {
+        const resend = new Resend(apiKey)
         const { data, error } = await resend.emails.send({
             from:    FROM,
             to:      Array.isArray(opts.to) ? opts.to : [opts.to],
