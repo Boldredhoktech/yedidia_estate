@@ -1,18 +1,30 @@
 // app/kwaku/layout.tsx
 
-import { redirect }    from 'next/navigation'
-import { getSession }  from '@/lib/auth'
+import { headers }     from 'next/headers'
 import KwakuSidebar    from '@/components/kwaku/KwakuSidebar'
+import type { SessionPayload, UserRole } from '@/lib/token'
 
 export default async function KwakuLayout({
-                                              children,
-                                          }: {
+    children,
+}: {
     children: React.ReactNode
 }) {
-    const session = await getSession()
+    const h        = await headers()
+    const userId   = h.get('x-user-id')
+    const userRole = h.get('x-user-role')
+    const email    = h.get('x-user-email')
+    const fullName = h.get('x-user-fullname') ?? 'Validator'
 
-    if (!session || !['agent_validator', 'superadmin'].includes(session.role)) {
-        redirect('/kwaku/login')
+    // No session headers = login page — render without protected layout
+    if (!userId || !userRole || !email) {
+        return <>{children}</>
+    }
+
+    const session: SessionPayload = {
+        userId,
+        role:     userRole as UserRole,
+        email,
+        fullName,
     }
 
     return (

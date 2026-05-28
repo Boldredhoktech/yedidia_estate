@@ -1,20 +1,31 @@
 // app/agents/layout.tsx
 
-import { redirect }      from 'next/navigation'
-import { getSession }    from '@/lib/auth'
-import AgentSidebar      from '@/components/agents/AgentSidebar'
-import KenteStrip        from '@/components/public/KenteStrip'
+import { headers }    from 'next/headers'
+import AgentSidebar   from '@/components/agents/AgentSidebar'
+import KenteStrip     from '@/components/public/KenteStrip'
+import type { SessionPayload, UserRole } from '@/lib/token'
 
 export default async function AgentsLayout({
-                                               children,
-                                           }: {
+    children,
+}: {
     children: React.ReactNode
 }) {
-    const session = await getSession()
+    const h        = await headers()
+    const userId   = h.get('x-user-id')
+    const userRole = h.get('x-user-role')
+    const email    = h.get('x-user-email')
+    const fullName = h.get('x-user-fullname') ?? 'Agent'
 
-    // Middleware handles redirects but we double-check here
-    if (!session || !['agent_immobilier', 'agent_validator', 'superadmin'].includes(session.role)) {
-        redirect('/agents/login')
+    // No session headers = login/register page — render without protected layout
+    if (!userId || !userRole || !email) {
+        return <>{children}</>
+    }
+
+    const session: SessionPayload = {
+        userId,
+        role:     userRole as UserRole,
+        email,
+        fullName,
     }
 
     return (
@@ -22,10 +33,7 @@ export default async function AgentsLayout({
             <KenteStrip position="top" height="thin" />
 
             <div className="flex flex-1 overflow-hidden">
-                {/* Sidebar */}
                 <AgentSidebar session={session} />
-
-                {/* Main content */}
                 <main className="flex-1 overflow-y-auto">
                     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                         {children}

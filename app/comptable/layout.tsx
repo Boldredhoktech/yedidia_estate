@@ -1,18 +1,30 @@
 // app/comptable/layout.tsx
 
-import { redirect }       from 'next/navigation'
-import { getSession }     from '@/lib/auth'
-import ComptableSidebar   from '@/components/comptable/ComptableSidebar'
+import { headers }       from 'next/headers'
+import ComptableSidebar  from '@/components/comptable/ComptableSidebar'
+import type { SessionPayload, UserRole } from '@/lib/token'
 
 export default async function ComptableLayout({
-                                                  children,
-                                              }: {
+    children,
+}: {
     children: React.ReactNode
 }) {
-    const session = await getSession()
+    const h        = await headers()
+    const userId   = h.get('x-user-id')
+    const userRole = h.get('x-user-role')
+    const email    = h.get('x-user-email')
+    const fullName = h.get('x-user-fullname') ?? 'Comptable'
 
-    if (!session || !['comptable', 'superadmin'].includes(session.role)) {
-        redirect('/comptable/login')
+    // No session headers = login page — render without protected layout
+    if (!userId || !userRole || !email) {
+        return <>{children}</>
+    }
+
+    const session: SessionPayload = {
+        userId,
+        role:     userRole as UserRole,
+        email,
+        fullName,
     }
 
     return (

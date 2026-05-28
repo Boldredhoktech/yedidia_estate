@@ -125,9 +125,10 @@ export async function middleware(request: NextRequest) {
 
     // ── Attach session info to request headers (readable by Server Components) ──
     const response = NextResponse.next()
-    response.headers.set('x-user-id',   session.userId)
-    response.headers.set('x-user-role', session.role)
-    response.headers.set('x-user-email',session.email)
+    response.headers.set('x-user-id',       session.userId)
+    response.headers.set('x-user-role',     session.role)
+    response.headers.set('x-user-email',    session.email)
+    response.headers.set('x-user-fullname', session.fullName)
 
     return response
 }
