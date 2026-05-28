@@ -1,4 +1,7 @@
 // lib/auth.ts
+// Node.js server runtime only — do NOT import in middleware.ts.
+// Types are defined in lib/token.ts and re-exported from here
+// so existing imports across the codebase stay unchanged.
 
 import argon2 from 'argon2'
 import jwt from 'jsonwebtoken'
@@ -7,31 +10,20 @@ import { supabaseAdmin } from '@/lib/db'
 import { getSuperAdminCredentials, isSuperAdminUsername } from '@/config/superadmin'
 
 // ─────────────────────────────────────────────
+// TYPES — re-exported from lib/token.ts
+// (single source of truth, Edge-compatible)
+// ─────────────────────────────────────────────
+
+export type { UserRole, SessionPayload } from '@/lib/token'
+import type { UserRole, SessionPayload } from '@/lib/token'
+
+// ─────────────────────────────────────────────
 // CONSTANTS
 // ─────────────────────────────────────────────
 
 const JWT_SECRET      = process.env.JWT_SECRET!
 const COOKIE_NAME     = 'ye_session'
 const SESSION_MAX_AGE = 60 * 60 * 8 // 8 hours in seconds
-
-// ─────────────────────────────────────────────
-// TYPES
-// ─────────────────────────────────────────────
-
-export type UserRole =
-    | 'superadmin'
-    | 'agent_validator'
-    | 'agent_immobilier'
-    | 'comptable'
-
-export interface SessionPayload {
-    userId:    string
-    role:      UserRole
-    email:     string
-    fullName:  string
-    iat?:      number
-    exp?:      number
-}
 
 // ─────────────────────────────────────────────
 // PASSWORD — ARGON2

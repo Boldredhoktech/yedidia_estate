@@ -1,9 +1,8 @@
 // middleware.ts
 
-import { NextRequest, NextResponse } from 'next/server'
-import { verifyToken }               from '@/lib/auth'
-import type { UserRole }             from '@/lib/auth'
-import { trackVisit }                from '@/lib/analytics'
+import { NextRequest, NextResponse }          from 'next/server'
+import { verifyTokenEdge, type UserRole }     from '@/lib/token'
+import { trackVisit }                         from '@/lib/analytics'
 
 // ─────────────────────────────────────────────
 // ROUTE → ALLOWED ROLES MAP
@@ -64,7 +63,7 @@ const COOKIE_NAME = 'ye_session'
 // MIDDLEWARE
 // ─────────────────────────────────────────────
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl
 
     // ── Analytics — public page visits (fire and forget) ──
@@ -112,7 +111,7 @@ export function middleware(request: NextRequest) {
         return redirectToLogin(request, baseRoute)
     }
 
-    const session = verifyToken(token)
+    const session = await verifyTokenEdge(token)
 
     if (!session) {
         return redirectToLogin(request, baseRoute)
