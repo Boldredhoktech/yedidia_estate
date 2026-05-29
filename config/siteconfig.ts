@@ -61,8 +61,8 @@ export const siteConfig = {
     // ─────────────────────────────────────────────
     legal: {
         companyName:        'Yedidia Estate Ltd',
-        registrationNumber: 'GH-REG-XXXXXXXX',
-        vatNumber:          'GH-VAT-XXXXXXXX',
+        registrationNumber: 'GH-REG-',
+        vatNumber:          'GH-VAT-',
         privacyPolicyUrl:   '/legal/privacy-policy',
         termsOfSaleUrl:     '/legal/terms-of-sale',
         legalNoticeUrl:     '/legal/legal-notice',

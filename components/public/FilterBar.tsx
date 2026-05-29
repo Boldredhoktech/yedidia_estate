@@ -2,33 +2,19 @@
 
 'use client'
 
-import { useCallback, useTransition } from 'react'
+import { useState, useCallback, useTransition, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { siteConfig } from '@/config/siteconfig'
 
 // ─────────────────────────────────────────────
-// GHANA CITIES — extend as needed
+// GHANA CITIES
 // ─────────────────────────────────────────────
 
 const GHANA_CITIES = [
-    'All Cities',
-    'Accra',
-    'Kumasi',
-    'Tamale',
-    'Takoradi',
-    'Cape Coast',
-    'Sunyani',
-    'Koforidua',
-    'Ho',
-    'Bolgatanga',
-    'Wa',
-    'Tema',
-    'Kasoa',
-    'Madina',
-    'East Legon',
-    'Spintex',
-    'Adenta',
-    'Ashaiman',
+    'Accra', 'Kumasi', 'Tamale', 'Takoradi', 'Cape Coast',
+    'Sunyani', 'Koforidua', 'Ho', 'Bolgatanga', 'Wa',
+    'Tema', 'Kasoa', 'Madina', 'East Legon', 'Spintex',
+    'Adenta', 'Ashaiman',
 ]
 
 // ─────────────────────────────────────────────
@@ -36,29 +22,34 @@ const GHANA_CITIES = [
 // ─────────────────────────────────────────────
 
 export default function FilterBar() {
-    const router         = useRouter()
-    const pathname       = usePathname()
-    const searchParams   = useSearchParams()
+    const router       = useRouter()
+    const pathname     = usePathname()
+    const searchParams = useSearchParams()
     const [pending, startTransition] = useTransition()
 
-    // Current filter values from URL
-    const city     = searchParams.get('city')    ?? ''
-    const type     = searchParams.get('type')    ?? ''
-    const minPrice = searchParams.get('minPrice') ?? ''
-    const maxPrice = searchParams.get('maxPrice') ?? ''
+    // ── Selects: read directly from URL (instant update on click) ──
+    const city = searchParams.get('city') ?? ''
+    const type = searchParams.get('type') ?? ''
 
-    // ── Update URL search params ──
+    // ── Budget inputs: local state to avoid keystroke lag ──
+    // The URL is only pushed after a 500ms pause (debounce).
+    const [localMin, setLocalMin] = useState(searchParams.get('minPrice') ?? '')
+    const [localMax, setLocalMax] = useState(searchParams.get('maxPrice') ?? '')
+    const minTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const maxTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+    // When "Clear" button resets the URL, sync local state back to empty
+    const urlMin = searchParams.get('minPrice') ?? ''
+    const urlMax = searchParams.get('maxPrice') ?? ''
+    useEffect(() => { if (!urlMin) setLocalMin('') }, [urlMin])
+    useEffect(() => { if (!urlMax) setLocalMax('') }, [urlMax])
+
+    // ── Core URL updater ──
     const updateFilter = useCallback(
         (key: string, value: string) => {
             const params = new URLSearchParams(searchParams.toString())
-            if (value && value !== 'all' && value !== '') {
-                params.set(key, value)
-            } else {
-                params.delete(key)
-            }
-            // Reset to page 1 on filter change
+            if (value) { params.set(key, value) } else { params.delete(key) }
             params.delete('page')
-
             startTransition(() => {
                 router.push(`${pathname}?${params.toString()}`, { scroll: false })
             })
@@ -66,18 +57,33 @@ export default function FilterBar() {
         [pathname, router, searchParams]
     )
 
-    const handleReset = () => {
-        startTransition(() => {
-            router.push(pathname, { scroll: false })
-        })
+    // ── Budget handlers with debounce ──
+    const handleMinChange = (val: string) => {
+        setLocalMin(val)
+        if (minTimer.current) clearTimeout(minTimer.current)
+        minTimer.current = setTimeout(() => updateFilter('minPrice', val), 500)
     }
 
-    const hasActiveFilters = city || type || minPrice || maxPrice
+    const handleMaxChange = (val: string) => {
+        setLocalMax(val)
+        if (maxTimer.current) clearTimeout(maxTimer.current)
+        maxTimer.current = setTimeout(() => updateFilter('maxPrice', val), 500)
+    }
+
+    const handleReset = () => {
+        setLocalMin('')
+        setLocalMax('')
+        if (minTimer.current) clearTimeout(minTimer.current)
+        if (maxTimer.current) clearTimeout(maxTimer.current)
+        startTransition(() => { router.push(pathname, { scroll: false }) })
+    }
+
+    const hasActiveFilters = city || type || localMin || localMax
 
     return (
         <div className="w-full bg-white border-b border-gray-100 shadow-sm sticky top-16 md:top-20 z-30">
 
-            {/* ── Kente accent line ── */}
+            {/* Kente accent */}
             <div className="h-0.5 w-full flex">
                 <div className="flex-1 bg-[#006B3F]" />
                 <div className="flex-1 bg-[#FCD116]" />
@@ -87,7 +93,7 @@ export default function FilterBar() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 md:py-4">
                 <div className="flex flex-col sm:flex-row gap-2 md:gap-3 items-stretch sm:items-end">
 
-                    {/* ── City ── */}
+                    {/* City */}
                     <div className="flex-1 min-w-0">
                         <label className="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wide">
                             City
@@ -97,14 +103,13 @@ export default function FilterBar() {
                                 value={city}
                                 onChange={e => updateFilter('city', e.target.value)}
                                 className="w-full appearance-none bg-gray-50 border border-gray-200
-                           text-gray-800 text-sm font-medium
-                           rounded-xl px-3 py-2.5 pr-8
+                           text-gray-800 text-sm font-medium rounded-xl px-3 py-2.5 pr-8
                            focus:outline-none focus:ring-2 focus:ring-brand-400
                            focus:border-brand-400 hover:border-gray-300
                            transition-colors duration-150 cursor-pointer"
                             >
                                 <option value="">All Cities</option>
-                                {GHANA_CITIES.filter(c => c !== 'All Cities').map(c => (
+                                {GHANA_CITIES.map(c => (
                                     <option key={c} value={c}>{c}</option>
                                 ))}
                             </select>
@@ -112,7 +117,7 @@ export default function FilterBar() {
                         </div>
                     </div>
 
-                    {/* ── Property type ── */}
+                    {/* Property type */}
                     <div className="flex-1 min-w-0">
                         <label className="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wide">
                             Property
@@ -122,8 +127,7 @@ export default function FilterBar() {
                                 value={type}
                                 onChange={e => updateFilter('type', e.target.value)}
                                 className="w-full appearance-none bg-gray-50 border border-gray-200
-                           text-gray-800 text-sm font-medium
-                           rounded-xl px-3 py-2.5 pr-8
+                           text-gray-800 text-sm font-medium rounded-xl px-3 py-2.5 pr-8
                            focus:outline-none focus:ring-2 focus:ring-brand-400
                            focus:border-brand-400 hover:border-gray-300
                            transition-colors duration-150 cursor-pointer"
@@ -137,20 +141,20 @@ export default function FilterBar() {
                         </div>
                     </div>
 
-                    {/* ── Min price ── */}
+                    {/* Min budget — local state, debounced */}
                     <div className="flex-1 min-w-0">
                         <label className="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wide">
-                            Min Budget (GHS)
+                            Min (GHS)
                         </label>
                         <input
                             type="number"
+                            inputMode="numeric"
                             min={0}
                             placeholder="0"
-                            value={minPrice}
-                            onChange={e => updateFilter('minPrice', e.target.value)}
+                            value={localMin}
+                            onChange={e => handleMinChange(e.target.value)}
                             className="w-full bg-gray-50 border border-gray-200
-                         text-gray-800 text-sm font-medium
-                         rounded-xl px-3 py-2.5
+                         text-gray-800 text-sm font-medium rounded-xl px-3 py-2.5
                          focus:outline-none focus:ring-2 focus:ring-brand-400
                          focus:border-brand-400 hover:border-gray-300
                          transition-colors duration-150
@@ -159,20 +163,20 @@ export default function FilterBar() {
                         />
                     </div>
 
-                    {/* ── Max price ── */}
+                    {/* Max budget — local state, debounced */}
                     <div className="flex-1 min-w-0">
                         <label className="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wide">
-                            Max Budget (GHS)
+                            Max (GHS)
                         </label>
                         <input
                             type="number"
+                            inputMode="numeric"
                             min={0}
                             placeholder="Any"
-                            value={maxPrice}
-                            onChange={e => updateFilter('maxPrice', e.target.value)}
+                            value={localMax}
+                            onChange={e => handleMaxChange(e.target.value)}
                             className="w-full bg-gray-50 border border-gray-200
-                         text-gray-800 text-sm font-medium
-                         rounded-xl px-3 py-2.5
+                         text-gray-800 text-sm font-medium rounded-xl px-3 py-2.5
                          focus:outline-none focus:ring-2 focus:ring-brand-400
                          focus:border-brand-400 hover:border-gray-300
                          transition-colors duration-150
@@ -181,7 +185,7 @@ export default function FilterBar() {
                         />
                     </div>
 
-                    {/* ── Reset button — only when filters active ── */}
+                    {/* Clear */}
                     {hasActiveFilters && (
                         <div className="flex items-end flex-shrink-0">
                             <button
@@ -205,14 +209,12 @@ export default function FilterBar() {
 
                 </div>
 
-                {/* ── Loading indicator ── */}
                 {pending && (
                     <div className="mt-2 flex items-center gap-2 text-xs text-brand-500 font-medium">
                         <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
                             <circle className="opacity-25" cx="12" cy="12" r="10"
                                     stroke="currentColor" strokeWidth="4"/>
-                            <path className="opacity-75" fill="currentColor"
-                                  d="M4 12a8 8 0 018-8v8H4z"/>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
                         </svg>
                         Filtering…
                     </div>
@@ -221,10 +223,6 @@ export default function FilterBar() {
         </div>
     )
 }
-
-// ─────────────────────────────────────────────
-// SMALL SUB-COMPONENT — reused chevron icon
-// ─────────────────────────────────────────────
 
 function ChevronIcon() {
     return (

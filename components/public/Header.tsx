@@ -18,13 +18,13 @@ export default function Header() {
                     <Link href="/" className="flex items-center gap-3 group flex-shrink-0">
                         {/* Logo */}
                         <div className="relative w-9 h-9 md:w-11 md:h-11 rounded-xl overflow-hidden
-                            bg-brand-500 flex items-center justify-center flex-shrink-0
+                            bg-white border border-gray-100 flex-shrink-0
                             shadow-md group-hover:shadow-brand-300 transition-shadow duration-300">
                             <Image
                                 src="/logo.png"
                                 alt={agencyConfig.name}
                                 fill
-                                className="object-contain p-0.5 z-10"
+                                className="object-contain p-1 z-10"
                                 unoptimized
                                 priority
                             />
