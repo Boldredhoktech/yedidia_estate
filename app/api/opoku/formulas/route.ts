@@ -66,9 +66,12 @@ export async function PATCH(req: NextRequest) {
             return NextResponse.json({ error: 'No fields to update.' }, { status: 400 })
         }
 
+        // SuperAdmin has no DB row — use null for FK fields
+        const actorId = session.userId === 'superadmin' ? null : session.userId
+
         const { error } = await supabaseAdmin
             .from('formulas')
-            .update({ ...updates, updated_by: session.userId })
+            .update({ ...updates, updated_by: actorId })
             .eq('id', id)
 
         if (error) {

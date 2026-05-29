@@ -136,13 +136,14 @@ export async function PATCH(req: NextRequest) {
                 ).toISOString()
             }
 
+            const actorId = session.userId === 'superadmin' ? null : session.userId
             await supabaseAdmin
                 .from('listings')
                 .update({
                     status:          'active',
                     published_at:    new Date().toISOString(),
                     expires_at:      expiresAt,
-                    validated_by:    session.userId,
+                    validated_by:    actorId,
                     validated_at:    new Date().toISOString(),
                 })
                 .eq('id', data.listingId)

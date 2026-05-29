@@ -94,12 +94,13 @@ export async function PATCH(req: NextRequest) {
         // BLOCK
         // ─────────────────────────────────────────
         if (data.action === 'block') {
+            const actorId = session.userId === 'superadmin' ? null : session.userId
             await supabaseAdmin
                 .from('users')
                 .update({
                     status:     'blocked',
                     blocked_at: new Date().toISOString(),
-                    blocked_by: session.userId,
+                    blocked_by: actorId,
                 })
                 .eq('id', data.agentId)
 

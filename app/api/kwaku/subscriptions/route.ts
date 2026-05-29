@@ -152,7 +152,7 @@ export async function POST(req: NextRequest) {
                 pubs_remaining: formula.pub_count,
                 purchased_at:   now.toISOString(),
                 expires_at:     expiresAt.toISOString(),
-                activated_by:   session.userId,
+                activated_by:   session.userId === 'superadmin' ? null : session.userId,
             })
             .select('id')
             .single()
@@ -175,7 +175,7 @@ export async function POST(req: NextRequest) {
                 currency:        'GHS',
                 status:          'success',
                 method:          'manual',
-                validated_by:    session.userId,
+                validated_by:    session.userId === 'superadmin' ? null : session.userId,
                 validated_at:    now.toISOString(),
                 notes:           notes ?? null,
             })

@@ -100,13 +100,16 @@ export async function POST(req: NextRequest) {
 
         const passwordHash = await hashPassword(password)
 
+        // SuperAdmin has no DB row — use null for FK fields
+        const actorId = session.userId === 'superadmin' ? null : session.userId
+
         const { data: user, error } = await supabaseAdmin
             .from('users')
             .insert({
                 ...rest,
                 password_hash: passwordHash,
                 status:        'active',
-                created_by:    session.userId,
+                created_by:    actorId,
             })
             .select('id, role, full_name, email, phone_call, phone_whatsapp, status, created_at')
             .single()
@@ -154,9 +157,11 @@ export async function PATCH(req: NextRequest) {
         }
 
         // Handle block timestamp
+        const actorId = session.userId === 'superadmin' ? null : session.userId
+
         if (updates.status === 'blocked') {
             finalUpdates.blocked_at = new Date().toISOString()
-            finalUpdates.blocked_by = session.userId
+            finalUpdates.blocked_by = actorId
         } else if (updates.status === 'active') {
             finalUpdates.blocked_at = null
             finalUpdates.blocked_by = null

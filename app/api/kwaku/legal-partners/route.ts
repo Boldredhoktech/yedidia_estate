@@ -82,11 +82,12 @@ export async function POST(req: NextRequest) {
             )
         }
 
+        const actorId = session.userId === 'superadmin' ? null : session.userId
         const { data: partner, error } = await supabaseAdmin
             .from('legal_partners')
             .insert({
                 ...parsed.data,
-                added_by:  session.userId,
+                added_by:  actorId,
                 is_active: true,
             })
             .select('id, name, type, city, phone, email, address, notes, is_active, created_at')

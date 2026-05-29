@@ -66,9 +66,11 @@ export async function POST(req: NextRequest) {
             )
         }
 
+        const actorId = session.userId === 'superadmin' ? null : session.userId
+
         const { data: popup, error } = await supabaseAdmin
             .from('popups')
-            .insert({ ...parsed.data, created_by: session.userId })
+            .insert({ ...parsed.data, created_by: actorId })
             .select('id, title, image_url, link_url, is_active, display_from, display_until, created_at')
             .single()
 
