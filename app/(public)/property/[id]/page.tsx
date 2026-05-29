@@ -7,6 +7,7 @@ import { siteConfig }        from '@/config/siteconfig'
 import PropertyGallery       from '@/components/public/PropertyGallery'
 import PropertyDetailCard    from '@/components/public/PropertyDetailCard'
 import ContactButtons        from '@/components/public/ContactButtons'
+import ViewTracker           from '@/components/public/ViewTracker'
 import Link                  from 'next/link'
 
 // ─────────────────────────────────────────────
@@ -145,11 +146,10 @@ export default async function PropertyDetailPage({
 
     if (!listing) notFound()
 
-    // Fire-and-forget view counter
-    incrementViews(id)
-
     return (
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10">
+            {/* Client-side view tracker — fires API call on mount, renders nothing */}
+            <ViewTracker listingId={id} />
 
             {/* ── Back button ── */}
             <Link

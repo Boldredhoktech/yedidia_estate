@@ -54,6 +54,15 @@ export default function ContactButtons({
 
     if (!waLink && !phone) return null
 
+    function track(type: 'whatsapp' | 'call') {
+        if (!listingId) return
+        fetch(`/api/listings/${listingId}/track`, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ type }),
+        }).catch(() => {})
+    }
+
     return (
         <div className={containerClass}>
 
@@ -64,6 +73,7 @@ export default function ContactButtons({
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Contact on WhatsApp"
+                    onClick={() => track('whatsapp')}
                     className={`${btnBase} bg-emerald-500 hover:bg-emerald-600
                       text-white shadow-sm hover:shadow-md
                       ${layout === 'col' ? 'w-full' : 'flex-1 min-w-0'}`}
@@ -96,6 +106,7 @@ export default function ContactButtons({
                 <a
                     href={`tel:${phone.replace(/\s/g, '')}`}
                     aria-label={`Call ${phone}`}
+                    onClick={() => track('call')}
                     className={`${btnBase} bg-white hover:bg-brand-50
                       text-gray-700 hover:text-brand-700
                       border border-gray-200 hover:border-brand-300

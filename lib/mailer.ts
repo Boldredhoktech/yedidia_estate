@@ -28,7 +28,7 @@ export interface MailResult {
 // BASE SEND
 // ─────────────────────────────────────────────
 
-async function sendMail(opts: {
+export async function sendMail(opts: {
     to:      string | string[]
     subject: string
     html:    string

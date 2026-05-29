@@ -573,6 +573,28 @@ export default function AgentLandingPage({ formulas }: Props) {
                                             </Link>.
                                         </p>
 
+                                        {/* Anti-abuse warning */}
+                                        <div className="bg-amber-50 border border-amber-200 rounded-xl
+                                                        px-3 py-2.5 flex items-start gap-2">
+                                            <svg className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5"
+                                                 fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                                 strokeWidth={2}>
+                                                <path strokeLinecap="round" strokeLinejoin="round"
+                                                      d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374
+                                                         1.948 3.374h14.71c1.73 0 2.813-1.874 1.948
+                                                         -3.374L13.949 3.378c-.866-1.5-3.032-1.5
+                                                         -3.898 0L2.697 16.126zM12 15.75h.007v.008H12
+                                                         v-.008z"/>
+                                            </svg>
+                                            <p className="text-[11px] text-amber-800 leading-snug">
+                                                <strong>Notice:</strong> Email, call number and WhatsApp
+                                                number are checked for uniqueness. Repeated registration
+                                                attempts using different identifiers to claim multiple
+                                                free offers will be flagged by our system and your IP
+                                                may be reported as a Terms of Service violation.
+                                            </p>
+                                        </div>
+
                                         <SubmitBtn loading={regState === 'loading'}
                                                    label="Create My Free Account" />
 
